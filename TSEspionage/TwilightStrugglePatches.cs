@@ -9,6 +9,8 @@ using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
+using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.Injection;
 
 namespace TSEspionage
 {
@@ -65,6 +67,8 @@ namespace TSEspionage
              */
             public static void Postfix()
             {
+                ClassInjector.RegisterTypeInIl2Cpp<CardCounts>();
+                ClassInjector.RegisterTypeInIl2Cpp<CardCountManager>();
                 var gameRoot = GameObject.Find("/Canvas/GameRoot");
                 gameRoot.AddComponent<CardCountManager>();
                 _cardCountManager = gameRoot.GetComponent<CardCountManager>();
@@ -121,7 +125,7 @@ namespace TSEspionage
                 var influenceBar = parent.transform.Find("Influence").gameObject;
                 var finalControlBar = Object.Instantiate(influenceBar, parent.transform);
                 finalControlBar.name = "FinalInfluence";
-                finalControlBar.AddComponent(typeof(RegionControlBar));
+                finalControlBar.AddComponent(Il2CppType.Of<RegionControlBar>());
                 finalControlBar.transform.SetSiblingIndex(influenceBar.transform.GetSiblingIndex() + 1);
 
                 // Set position and size

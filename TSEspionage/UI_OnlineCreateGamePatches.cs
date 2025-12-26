@@ -100,20 +100,15 @@ namespace TSEspionage
         [HarmonyPatch(typeof(UI_OnlineCreateGame), "OnCreateGameButtonPressed")]
         public static class OnCreateGameButtonPressedPatch
         {
-            public static bool Prefix(UI_OnlineCreateGame __instance, ref Coroutine ___m_delayCoroutine)
+            public static bool Prefix(UI_OnlineCreateGame __instance)
             {
                 __instance.m_messagePopupTitle.text = "Please Wait";
                 __instance.m_messagePopupText.text = "Creating game...";
                 __instance.m_messagePopup.SetActive(true);
                 __instance.m_messagePopupCancelButton.SetActive(false);
-                ___m_delayCoroutine = __instance.StartCoroutine((IEnumerator)CallInstanceMethod(
-                    __instance,
-                    "ProcessDelayTime",
-                    new object[]
-                    {
-                        __instance.m_minDialogDisplayTime
-                    }
-                ));
+                __instance.m_delayCoroutine = __instance.StartCoroutine(
+                    "ProcessDelayTime", __instance.m_minDialogDisplayTime
+                );
                 CreateGame(__instance);
 
                 return false;

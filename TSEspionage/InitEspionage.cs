@@ -5,41 +5,34 @@
  */
 
 using HarmonyLib;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+using BepInEx;
+using BepInEx.Logging;
+using BepInEx.Unity.IL2CPP;
 
 namespace TSEspionage
 {
     /**
      * Patches the Twilight Struggle code.
      */
-    public static class InitEspionage
+    [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+    public class InitEspionage : BasePlugin
     {
-        private static bool _patched = false;
+        internal static new ManualLogSource Log;
 
-        public static void Init()
+        public override void Load()
         {
-            SceneManager.activeSceneChanged += Patch;
-        }
+            var gameLogWriter = new GameLogWriter("");
+            var gameEventHandler = new GameEventHandler(gameLogWriter);
+            Log = base.Log;
 
-        private static void Patch(Scene oldScene, Scene newScene)
-        {
-            if (!_patched)
-            {
-                var gameLogWriter = new GameLogWriter("");
-                var gameEventHandler = new GameEventHandler(gameLogWriter);
+            // Initialize the patch classes
+            GameLogPatches.Init(gameLogWriter, Log);
+            LoadLevelSplashScreenPatches.Init();
+            TwilightStrugglePatches.Init(gameEventHandler);
+            UI_SettingsMenuPatches.Init();
 
-                // Initialize the patch classes
-                GameLogPatches.Init(gameLogWriter, Debug.unityLogger);
-                LoadLevelSplashScreenPatches.Init();
-                TwilightStrugglePatches.Init(gameEventHandler);
-                UI_SettingsMenuPatches.Init();
-
-                // Patch the TS assembly
-                new Harmony("com.twilight-struggle.TSEspionage").PatchAll();
-
-                _patched = true;
-            }
+            // Patch the TS assembly
+            new Harmony("com.twilight-struggle.TSEspionage").PatchAll();
         }
     }
 }

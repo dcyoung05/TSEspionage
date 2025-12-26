@@ -6,9 +6,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using HarmonyLib;
-using UnityEngine;
+using BepInEx.Logging;
 
 namespace TSEspionage
 {
@@ -17,13 +16,10 @@ namespace TSEspionage
      */
     public static class GameLogPatches
     {
-        private static ILogger _log;
+        private static ManualLogSource _log;
         private static GameLogWriter _gameLogWriter;
 
-        private static readonly AccessTools.FieldRef<GameLog, List<GameLogItem>> LogItemListRef =
-            AccessTools.FieldRefAccess<GameLog, List<GameLogItem>>("m_logItemList");
-
-        public static void Init(GameLogWriter gameLogWriter, ILogger log)
+        public static void Init(GameLogWriter gameLogWriter, ManualLogSource log)
         {
             _gameLogWriter = gameLogWriter;
             _log = log;
@@ -34,12 +30,16 @@ namespace TSEspionage
         {
             public static void Postfix(GameLog __instance)
             {
-                var entries = LogItemListRef(__instance).Select(item => new GameLogEntry
-                {
-                    name = item.m_LogItemName.text,
-                    desc = item.m_LogItemDesc.text,
-                    detail = item.m_LogItemDetail.text
-                }).ToArray();
+                var entry_list = new List<GameLogEntry>();
+                for(int i = 0; i < __instance.m_logItemList.Count; i++) {
+                    entry_list.Add(new GameLogEntry {
+                        name = __instance.m_logItemList[i].m_LogItemName.text,
+                        desc = __instance.m_logItemList[i].m_LogItemDesc.text,
+                        detail = __instance.m_logItemList[i].m_LogItemDetail.text
+                    });
+                }
+
+                var entries = entry_list.ToArray();
 
                 if (entries.Length == 0)
                 {
@@ -53,7 +53,7 @@ namespace TSEspionage
                 }
                 catch (Exception e)
                 {
-                    _log.Log(LogType.Error, $"Failed writing game log for game {gameId}", e);
+                    _log.LogError($"Failed writing game log for game {gameId}: {e}");
                 }
             }
         }

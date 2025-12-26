@@ -30,9 +30,6 @@ namespace TSEspionage
         private const float LongPauseFast = 1.25f;
         private const float LongPauseFastest = 0.66666f;
 
-        private static readonly AccessTools.FieldRef<AnimateObject, float> AnimationDivisorRef =
-            AccessTools.FieldRefAccess<AnimateObject, float>("m_optionScalar");
-
         [HarmonyPatch(typeof(AnimateObject), "SetOptionScalar")]
         public static class SetOptionScalarPatch
         {
@@ -57,7 +54,7 @@ namespace TSEspionage
                 }
 
                 var scale = InternalVert / Screen.height;
-                AnimationDivisorRef(__instance) = (float)(slowdown * scale);
+                __instance.m_optionScalar = (float)(slowdown * scale);
 
                 return false;
             }

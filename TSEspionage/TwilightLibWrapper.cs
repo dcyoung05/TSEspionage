@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using GameData;
+using Il2CppInterop.Runtime;
 
 namespace TSEspionage
 {
@@ -19,8 +20,9 @@ namespace TSEspionage
         private static readonly int DeckCountsSize = Marshal.SizeOf<GameDeckCounts>();
         private static readonly int PlayerDataSize = Marshal.SizeOf<PlayerData>();
         private static readonly int PlayerHandStateSize = Marshal.SizeOf<GamePlayerHandState>();
-        private static readonly int RegionScoreStateSize = Marshal.SizeOf<GameFinalScoreState>();
-
+        //private static readonly int RegionScoreStateSize = Marshal.SizeOf<GameFinalScoreState>();
+        private static readonly int RegionScoreStateSize = IL2CPP.il2cpp_class_array_element_size(Il2CppType.Of<GameFinalScoreState>().Pointer);
+        
         public static GameFinalScoreState GetGameFinalScoreState()
         {
             var handle = GCHandle.Alloc(new byte[RegionScoreStateSize], GCHandleType.Pinned);

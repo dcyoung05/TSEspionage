@@ -110,7 +110,7 @@ namespace TSEspionage
 
         public static void Init()
         {
-            SceneManager.sceneLoaded += (scene2, mode) => HandleSceneLoaded(scene2);
+            //SceneManager.sceneLoaded += (scene2, mode) => HandleSceneLoaded(scene2);
         }
 
         /**
@@ -205,9 +205,9 @@ namespace TSEspionage
             fpsButton.transform.SetSiblingIndex(1);
             fpsButton.Find("Label (TMP)").GetComponent<TextMeshProUGUI>().text = "x FPS Button";
 
-            var clickEvent = new Button.ButtonClickedEvent();
-            clickEvent.AddListener(ShowFpsPopup);
-            fpsButton.GetComponent<Button>().onClick = clickEvent;
+            // var clickEvent = new Button.ButtonClickedEvent();
+            // clickEvent.AddListener(ShowFpsPopup);
+            // fpsButton.GetComponent<Button>().onClick = clickEvent;
         }
 
         private static void ShowFpsPopup()

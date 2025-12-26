@@ -90,12 +90,12 @@ namespace TSEspionage
 
         public void Start()
         {
-            _cardCountManager.AddListener(UpdateText);
+            //_cardCountManager.AddListener(UpdateText);
         }
 
         public void OnDestroy()
         {
-            _cardCountManager.RemoveListener(UpdateText);
+            //_cardCountManager.RemoveListener(UpdateText);
         }
 
         /**

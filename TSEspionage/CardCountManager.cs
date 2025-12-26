@@ -7,13 +7,15 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using Il2CppInterop.Runtime.Injection;
+using Il2CppInterop.Runtime.InteropTypes;
 
 namespace TSEspionage
 {
     /**
      * Counts of cards in each hand/pile.
      */
-    public class CardCounts
+    public class CardCounts : Il2CppSystem.Object
     {
         public readonly TwilightLibWrapper.Players Players;
         public readonly EPlayer ChinaCardHolder;
@@ -24,9 +26,13 @@ namespace TSEspionage
         public readonly ushort DiscardPileCount;
         public readonly ushort RemovedPileCount;
 
+        public CardCounts(IntPtr ptr) : base(ptr) {}
+
         private CardCounts(TwilightLibWrapper.Players players, EPlayer chinaCardHolder, bool chinaCardFaceUp, ushort usaHandCount,
-            ushort ussrHandCount, ushort drawPileCount, ushort discardPileCount, ushort removedPileCount)
+            ushort ussrHandCount, ushort drawPileCount, ushort discardPileCount, ushort removedPileCount) : 
+                base(ClassInjector.DerivedConstructorPointer<CardCounts>())
         {
+            ClassInjector.DerivedConstructorBody(this);
             Players = players;
             ChinaCardHolder = chinaCardHolder;
             ChinaCardFaceUp = chinaCardFaceUp;

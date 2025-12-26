@@ -80,20 +80,20 @@ namespace TSEspionage
 
         private void UpdateControlBar(GameFinalRegionScoreState regionScore)
         {
-            if (_usaScore != regionScore.player_score_state_usa
-                || _ussrScore != regionScore.player_score_state_ussr)
-            {
-                StartCoroutine(AnimateBar(
-                    _imageUsa,
-                    _imageUsa.fillAmount,
-                    regionScore.player_score_state_usa * 0.25f,
-                    _animateTime));
-                StartCoroutine(AnimateBar(
-                    _imageUssr,
-                    _imageUssr.fillAmount,
-                    regionScore.player_score_state_ussr * 0.25f,
-                    _animateTime));
-            }
+            // if (_usaScore != regionScore.player_score_state_usa
+            //     || _ussrScore != regionScore.player_score_state_ussr)
+            // {
+            //     StartCoroutine(AnimateBar(
+            //         _imageUsa,
+            //         _imageUsa.fillAmount,
+            //         regionScore.player_score_state_usa * 0.25f,
+            //         _animateTime));
+            //     StartCoroutine(AnimateBar(
+            //         _imageUssr,
+            //         _imageUssr.fillAmount,
+            //         regionScore.player_score_state_ussr * 0.25f,
+            //         _animateTime));
+            // }
 
             _usaScore = regionScore.player_score_state_usa;
             _ussrScore = regionScore.player_score_state_ussr;
