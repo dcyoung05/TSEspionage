@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using GameData;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 namespace TSEspionage
 {
@@ -28,6 +29,8 @@ namespace TSEspionage
 
         private ushort _usaScore;
         private ushort _ussrScore;
+
+        public RegionControlBar(IntPtr ptr) : base(ptr) {}
 
         public void Init(GameObject controlBar, float mAnimateTime)
         {

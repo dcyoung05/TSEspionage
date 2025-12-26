@@ -66,9 +66,7 @@ namespace TSEspionage
              * Update the scene's GameObjects
              */
             public static void Postfix()
-            {
-                ClassInjector.RegisterTypeInIl2Cpp<CardCounts>();
-                ClassInjector.RegisterTypeInIl2Cpp<CardCountManager>();
+            {;
                 var gameRoot = GameObject.Find("/Canvas/GameRoot");
                 gameRoot.AddComponent<CardCountManager>();
                 _cardCountManager = gameRoot.GetComponent<CardCountManager>();
@@ -80,7 +78,7 @@ namespace TSEspionage
 
                 // Trim the camera presets
                 var cameraPresets = lowerHUD.Find("CameraPresets");
-                TrimCameraPresets(cameraPresets);
+                //TrimCameraPresets(cameraPresets);
 
                 // Move and update the card tabs
                 cardTray.gameObject.AddComponent<CardTabBehaviour>();
@@ -194,13 +192,13 @@ namespace TSEspionage
                     return;
                 }
 
-                var scoreState = TwilightLibWrapper.GetGameFinalScoreState();
+                // var scoreState = TwilightLibWrapper.GetGameFinalScoreState();
 
-                var middleEastScoreState = scoreState.region[(int)RegionId.MiddleEast];
-                _middleEastRegionControlBar.HandleRegionScore(middleEastScoreState);
+                // var middleEastScoreState = scoreState.region[(int)RegionId.MiddleEast];
+                // _middleEastRegionControlBar.HandleRegionScore(middleEastScoreState);
 
-                var asiaScoreState = scoreState.region[(int)RegionId.Asia];
-                _asiaRegionControlBar.HandleRegionScore(asiaScoreState);
+                // var asiaScoreState = scoreState.region[(int)RegionId.Asia];
+                // _asiaRegionControlBar.HandleRegionScore(asiaScoreState);
             }
         }
 

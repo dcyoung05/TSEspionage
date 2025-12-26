@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using GameData;
 using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.Injection;
+using Il2CppInterop.Runtime.InteropTypes.Fields;
 
 namespace TSEspionage
 {
@@ -109,19 +111,26 @@ namespace TSEspionage
             }
         }
 
-        public class Players
+        public class Players : Il2CppSystem.Object
         {
-            public readonly int LocalPlayerId;
-            public readonly int OpposingPlayerId;
-            public readonly EPlayer LocalSuperpower;
-            public readonly EPlayer OpposingSuperpower;
+            public Il2CppValueField<int> LocalPlayerId;
+            public Il2CppValueField<int> OpposingPlayerId;
+            public Il2CppValueField<EPlayer> LocalSuperpower;
+            public Il2CppValueField<EPlayer> OpposingSuperpower;
 
-            public Players(int localPlayerId, int opposingPlayerId, EPlayer localSuperpower, EPlayer opposingSuperpower)
+            public Players(IntPtr ptr) : base(ptr)
             {
-                LocalPlayerId = localPlayerId;
-                OpposingPlayerId = opposingPlayerId;
-                LocalSuperpower = localSuperpower;
-                OpposingSuperpower = opposingSuperpower;
+                ClassInjector.DerivedConstructorBody(this);
+            }
+
+            public Players(int localPlayerId, int opposingPlayerId, EPlayer localSuperpower, EPlayer opposingSuperpower) :
+                base(ClassInjector.DerivedConstructorPointer<Players>())
+            {
+                ClassInjector.DerivedConstructorBody(this);
+                LocalPlayerId.Set(localPlayerId);
+                OpposingPlayerId.Set(opposingPlayerId);
+                LocalSuperpower.Set(localSuperpower);
+                OpposingSuperpower.Set(opposingSuperpower);
             }
 
             public int GetUsaPlayerId()

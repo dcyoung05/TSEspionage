@@ -8,6 +8,8 @@ using HarmonyLib;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
+using Il2CppInterop.Runtime.Injection;
+using System;
 
 namespace TSEspionage
 {
@@ -18,6 +20,23 @@ namespace TSEspionage
     public class InitEspionage : BasePlugin
     {
         internal static new ManualLogSource Log;
+
+        private Type[] il2cppClasses =
+        {
+            typeof(TwilightLibWrapper.Players),
+            typeof(CardCounts),
+            typeof(CardCountManager),
+            typeof(CardTabBehaviour),
+            typeof(RegionControlBar)
+        };
+
+        private void RegisterClasses()
+        {
+            foreach(var t in il2cppClasses)
+            {
+                ClassInjector.RegisterTypeInIl2Cpp(t);
+            }
+        }
 
         public override void Load()
         {
@@ -33,6 +52,8 @@ namespace TSEspionage
 
             // Patch the TS assembly
             new Harmony("com.twilight-struggle.TSEspionage").PatchAll();
+
+            RegisterClasses();
         }
     }
 }

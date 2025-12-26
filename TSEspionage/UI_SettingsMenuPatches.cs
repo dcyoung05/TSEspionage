@@ -110,7 +110,7 @@ namespace TSEspionage
 
         public static void Init()
         {
-            //SceneManager.sceneLoaded += (scene2, mode) => HandleSceneLoaded(scene2);
+            //SceneManager.sceneLoaded += new UnityAction<Scene, LoadSceneMode>((scene2, mode) => HandleSceneLoaded(scene2));
         }
 
         /**

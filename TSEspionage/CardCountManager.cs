@@ -8,7 +8,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using Il2CppInterop.Runtime.Injection;
-using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime.InteropTypes.Fields;
 
 namespace TSEspionage
 {
@@ -17,30 +17,33 @@ namespace TSEspionage
      */
     public class CardCounts : Il2CppSystem.Object
     {
-        public readonly TwilightLibWrapper.Players Players;
-        public readonly EPlayer ChinaCardHolder;
-        public readonly bool ChinaCardFaceUp;
-        public readonly ushort UsaHandCount;
-        public readonly ushort UssrHandCount;
-        public readonly ushort DrawPileCount;
-        public readonly ushort DiscardPileCount;
-        public readonly ushort RemovedPileCount;
+        public Il2CppReferenceField<TwilightLibWrapper.Players> Players;
+        public Il2CppValueField<EPlayer> ChinaCardHolder;
+        public Il2CppValueField<bool> ChinaCardFaceUp;
+        public Il2CppValueField<ushort> UsaHandCount;
+        public Il2CppValueField<ushort> UssrHandCount;
+        public Il2CppValueField<ushort> DrawPileCount;
+        public Il2CppValueField<ushort> DiscardPileCount;
+        public Il2CppValueField<ushort> RemovedPileCount;
 
-        public CardCounts(IntPtr ptr) : base(ptr) {}
+        public CardCounts(IntPtr ptr) : base(ptr)
+        {
+            ClassInjector.DerivedConstructorBody(this);
+        }
 
         private CardCounts(TwilightLibWrapper.Players players, EPlayer chinaCardHolder, bool chinaCardFaceUp, ushort usaHandCount,
             ushort ussrHandCount, ushort drawPileCount, ushort discardPileCount, ushort removedPileCount) : 
                 base(ClassInjector.DerivedConstructorPointer<CardCounts>())
         {
             ClassInjector.DerivedConstructorBody(this);
-            Players = players;
-            ChinaCardHolder = chinaCardHolder;
-            ChinaCardFaceUp = chinaCardFaceUp;
-            UsaHandCount = usaHandCount;
-            UssrHandCount = ussrHandCount;
-            DrawPileCount = drawPileCount;
-            DiscardPileCount = discardPileCount;
-            RemovedPileCount = removedPileCount;
+            Players.Set(players);
+            ChinaCardHolder.Set(chinaCardHolder);
+            ChinaCardFaceUp.Set(chinaCardFaceUp);
+            UsaHandCount.Set(usaHandCount);
+            UssrHandCount.Set(ussrHandCount);
+            DrawPileCount.Set(drawPileCount);
+            DiscardPileCount.Set(discardPileCount);
+            RemovedPileCount.Set(removedPileCount);
         }
 
         public class Builder
@@ -69,6 +72,8 @@ namespace TSEspionage
     public class CardCountManager : MonoBehaviour
     {
         private readonly UnityEvent<CardCounts> _eventTrigger = new UnityEvent<CardCounts>();
+
+        public CardCountManager(IntPtr ptr) : base(ptr) {}
 
         public void UpdateCardCounts()
         {
