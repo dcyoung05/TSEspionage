@@ -192,13 +192,13 @@ namespace TSEspionage
                     return;
                 }
 
-                // var scoreState = TwilightLibWrapper.GetGameFinalScoreState();
+                var scoreState = TwilightLibWrapper.GetGameFinalScoreState();
 
-                // var middleEastScoreState = scoreState.region[(int)RegionId.MiddleEast];
-                // _middleEastRegionControlBar.HandleRegionScore(middleEastScoreState);
+                var middleEastScoreState = scoreState.region[(int)RegionId.MiddleEast];
+                _middleEastRegionControlBar.HandleRegionScore(middleEastScoreState);
 
-                // var asiaScoreState = scoreState.region[(int)RegionId.Asia];
-                // _asiaRegionControlBar.HandleRegionScore(asiaScoreState);
+                var asiaScoreState = scoreState.region[(int)RegionId.Asia];
+                _asiaRegionControlBar.HandleRegionScore(asiaScoreState);
             }
         }
 

@@ -11,7 +11,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using Object = UnityEngine.Object;
+using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.Injection;
 
 namespace TSEspionage
 {
@@ -110,32 +113,51 @@ namespace TSEspionage
 
         public static void Init()
         {
-            //SceneManager.sceneLoaded += new UnityAction<Scene, LoadSceneMode>((scene2, mode) => HandleSceneLoaded(scene2));
+            IntPtr clazz = Il2CppClassPointerStore<SettingsCallbacks>.NativeClassPtr;
+            IntPtr method = IL2CPP.GetIl2CppMethod(clazz, false, "HandleSceneLoaded", "System.Void", "UnityEngine.SceneManagement.Scene");
+
+            var sc = new SettingsCallbacks();
+            SceneManager.sceneLoaded += new UnityAction<Scene, LoadSceneMode>(sc, method);
         }
 
-        /**
-         * When the settings scene is loaded, add our extra options.
-         */
-        private static void HandleSceneLoaded(Scene scene)
+        public class SettingsCallbacks : Il2CppSystem.Object
         {
-            if (_animationFastestToggle == null && scene.path == "Assets/Screens/StartScreenAlt.unity")
-            {
-                foreach (var gameObj in scene.GetRootGameObjects())
-                {
-                    Debug.Log(gameObj);
-                    if (gameObj.name == "Canvas")
-                    {
-                        var settingsMenu = gameObj.transform.Find(
-                            "FrontEndRoot/Canvas_FrontEnd/Settings_Menu/SettingsMenu_Script");
-                        var script = settingsMenu.GetComponent<UI_SettingsMenu>();
+            public SettingsCallbacks(IntPtr ptr) : base(ptr) {}
 
-                        _animationFastestToggle = CreateFastestToggle(script);
-                        // CreateFpsPopup(script);
-                    }
-                }
+            public SettingsCallbacks() : base(ClassInjector.DerivedConstructorPointer<SettingsCallbacks>())
+            {
+                ClassInjector.DerivedConstructorBody(this);
             }
 
-            Application.targetFrameRate = GetSanitizedFramerate();
+            /**
+             * When the settings scene is loaded, add our extra options.
+             */
+            public void HandleSceneLoaded(Scene scene)
+            {
+                if (_animationFastestToggle == null && scene.path == "Assets/Screens/StartScreenAlt.unity")
+                {
+                    foreach (var gameObj in scene.GetRootGameObjects())
+                    {
+                        Debug.Log(gameObj);
+                        if (gameObj.name == "Canvas")
+                        {
+                            var settingsMenu = gameObj.transform.Find(
+                                "FrontEndRoot/Canvas_FrontEnd/Settings_Menu/SettingsMenu_Script");
+                            var script = settingsMenu.GetComponent<UI_SettingsMenu>();
+
+                            _animationFastestToggle = CreateFastestToggle(script);
+                            //CreateFpsPopup(script);
+                        }
+                    }
+                }
+
+                Application.targetFrameRate = GetSanitizedFramerate();
+            }
+
+            public void ShowFpsPopup()
+            {
+                _fpsPopup.SetActive(true);
+            }
         }
 
         private static int GetSanitizedFramerate()
@@ -198,6 +220,8 @@ namespace TSEspionage
                 child.parent = null;
             }
 
+            
+
             var buttons = _fpsPopup.gameObject.transform.parent.parent.parent.parent.Find("Buttons");
             var resolutionsButton = buttons.Find("Resolutions");
             var fpsButton = Object.Instantiate(resolutionsButton, resolutionsButton.transform.parent);
@@ -205,14 +229,13 @@ namespace TSEspionage
             fpsButton.transform.SetSiblingIndex(1);
             fpsButton.Find("Label (TMP)").GetComponent<TextMeshProUGUI>().text = "x FPS Button";
 
-            // var clickEvent = new Button.ButtonClickedEvent();
-            // clickEvent.AddListener(ShowFpsPopup);
-            // fpsButton.GetComponent<Button>().onClick = clickEvent;
-        }
+            IntPtr clazz = Il2CppClassPointerStore<SettingsCallbacks>.NativeClassPtr;
+            IntPtr method = IL2CPP.GetIl2CppMethod(clazz, false, "ShowFpsPopup", "System.Void");
 
-        private static void ShowFpsPopup()
-        {
-            _fpsPopup.SetActive(true);
+            var sc = new SettingsCallbacks();
+            var clickEvent = new Button.ButtonClickedEvent();
+            clickEvent.AddListener(new UnityAction (sc, method));
+            fpsButton.GetComponent<Button>().onClick = clickEvent;
         }
         
         private static  string[] GetPlayersToHide()

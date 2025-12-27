@@ -7,10 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.IO;
 using GameData;
-using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace TSEspionage
 {
@@ -19,11 +20,29 @@ namespace TSEspionage
      */
     public static class TwilightLibWrapper
     {
+        private static T ReadStruct<T>(this BinaryReader reader)
+        where T : struct
+        {
+            Byte[] buffer = new Byte[Marshal.SizeOf(typeof(T))];
+            reader.Read(buffer, 0, buffer.Length);
+            GCHandle handle = default(GCHandle);
+            try
+            {
+                handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+                return (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
+            }
+            finally
+            {
+                if (handle.IsAllocated) 
+                    handle.Free();
+            }
+        }
+
         private static readonly int DeckCountsSize = Marshal.SizeOf<GameDeckCounts>();
         private static readonly int PlayerDataSize = Marshal.SizeOf<PlayerData>();
         private static readonly int PlayerHandStateSize = Marshal.SizeOf<GamePlayerHandState>();
-        //private static readonly int RegionScoreStateSize = Marshal.SizeOf<GameFinalScoreState>();
-        private static readonly int RegionScoreStateSize = IL2CPP.il2cpp_class_array_element_size(Il2CppType.Of<GameFinalScoreState>().Pointer);
+        //private static readonly int RegionScoreStateSize = Marshal.SizeOf<GameFinalScoreStateStruct>();
+        private static readonly int RegionScoreStateSize = 180;
         
         public static GameFinalScoreState GetGameFinalScoreState()
         {
@@ -32,8 +51,20 @@ namespace TSEspionage
             try
             {
                 var ptr = handle.AddrOfPinnedObject();
-                TwilightLib.GetGameFinalScoreState(true, ptr, RegionScoreStateSize);
-                return (GameFinalScoreState)Marshal.PtrToStructure(ptr, typeof(GameFinalScoreState));
+                var bytesCopied = TwilightLib.GetGameFinalScoreState(true, ptr, RegionScoreStateSize);
+                var bytes = new byte[RegionScoreStateSize];
+                Marshal.Copy(ptr, bytes, 0, RegionScoreStateSize);
+
+                var br = new BinaryReader(new MemoryStream(bytes));
+                var gfs = new GameFinalScoreState();
+                gfs.region = new Il2CppStructArray<GameFinalRegionScoreState>(7);
+                for(int i = 0; i < 7; i++)
+                {
+                    gfs.region[i] = br.ReadStruct<GameFinalRegionScoreState>();
+                }
+                br.Close();
+
+                return gfs;
             }
             finally
             {

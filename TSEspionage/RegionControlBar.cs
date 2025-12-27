@@ -9,6 +9,8 @@ using GameData;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using Il2CppInterop.Runtime.Injection;
+using Il2CppInterop.Runtime.InteropTypes.Fields;
 
 namespace TSEspionage
 {
@@ -83,54 +85,22 @@ namespace TSEspionage
 
         private void UpdateControlBar(GameFinalRegionScoreState regionScore)
         {
-            // if (_usaScore != regionScore.player_score_state_usa
-            //     || _ussrScore != regionScore.player_score_state_ussr)
-            // {
-            //     StartCoroutine(AnimateBar(
-            //         _imageUsa,
-            //         _imageUsa.fillAmount,
-            //         regionScore.player_score_state_usa * 0.25f,
-            //         _animateTime));
-            //     StartCoroutine(AnimateBar(
-            //         _imageUssr,
-            //         _imageUssr.fillAmount,
-            //         regionScore.player_score_state_ussr * 0.25f,
-            //         _animateTime));
-            // }
+            if (_usaScore != regionScore.player_score_state_usa
+                || _ussrScore != regionScore.player_score_state_ussr)
+            {
+                var sp = new ScorePanel();
+                StartCoroutine(sp.AnimateBar(_imageUsa,
+                    _imageUsa.fillAmount,
+                    regionScore.player_score_state_usa * 0.25f,
+                    _animateTime));
+                StartCoroutine(sp.AnimateBar(_imageUssr,
+                    _imageUssr.fillAmount,
+                    regionScore.player_score_state_ussr * 0.25f,
+                    _animateTime));
+            }
 
             _usaScore = regionScore.player_score_state_usa;
             _ussrScore = regionScore.player_score_state_ussr;
-        }
-
-        private static IEnumerator<YieldInstruction> AnimateBar(
-            Image image,
-            float currentFill,
-            float targetFill,
-            float totalMoveTime)
-        {
-            var previousTime = Time.time;
-            var currentAnimTime = 0.0f;
-            var bAnimating = true;
-            while (bAnimating)
-            {
-                currentAnimTime += Time.time - previousTime;
-                previousTime = Time.time;
-                if (currentAnimTime < totalMoveTime)
-                {
-                    image.fillAmount = Vector2.Lerp(
-                            new Vector2(currentFill, 0.0f),
-                            new Vector2(targetFill, 0.0f),
-                            currentAnimTime / totalMoveTime)
-                        .x;
-                }
-                else
-                {
-                    image.fillAmount = targetFill;
-                    bAnimating = false;
-                }
-
-                yield return new WaitForEndOfFrame();
-            }
         }
     }
 }

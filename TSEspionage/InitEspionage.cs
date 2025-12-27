@@ -8,6 +8,7 @@ using HarmonyLib;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
+using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using System;
 
@@ -24,6 +25,7 @@ namespace TSEspionage
         private Type[] il2cppClasses =
         {
             typeof(TwilightLibWrapper.Players),
+            typeof(UI_SettingsMenuPatches.SettingsCallbacks),
             typeof(CardCounts),
             typeof(CardCountManager),
             typeof(CardTabBehaviour),
@@ -44,6 +46,8 @@ namespace TSEspionage
             var gameEventHandler = new GameEventHandler(gameLogWriter);
             Log = base.Log;
 
+            RegisterClasses();
+
             // Initialize the patch classes
             GameLogPatches.Init(gameLogWriter, Log);
             LoadLevelSplashScreenPatches.Init();
@@ -52,8 +56,6 @@ namespace TSEspionage
 
             // Patch the TS assembly
             new Harmony("com.twilight-struggle.TSEspionage").PatchAll();
-
-            RegisterClasses();
         }
     }
 }
