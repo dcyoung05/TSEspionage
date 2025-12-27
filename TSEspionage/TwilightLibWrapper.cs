@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.IO;
 using GameData;
+using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using Il2CppInterop.Runtime.InteropTypes.Fields;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
@@ -41,7 +42,6 @@ namespace TSEspionage
         private static readonly int DeckCountsSize = Marshal.SizeOf<GameDeckCounts>();
         private static readonly int PlayerDataSize = Marshal.SizeOf<PlayerData>();
         private static readonly int PlayerHandStateSize = Marshal.SizeOf<GamePlayerHandState>();
-        //private static readonly int RegionScoreStateSize = Marshal.SizeOf<GameFinalScoreStateStruct>();
         private static readonly int RegionScoreStateSize = 180;
         
         public static GameFinalScoreState GetGameFinalScoreState()
@@ -52,8 +52,8 @@ namespace TSEspionage
             {
                 var ptr = handle.AddrOfPinnedObject();
                 var bytesCopied = TwilightLib.GetGameFinalScoreState(true, ptr, RegionScoreStateSize);
-                var bytes = new byte[RegionScoreStateSize];
-                Marshal.Copy(ptr, bytes, 0, RegionScoreStateSize);
+                var bytes = new byte[bytesCopied];
+                Marshal.Copy(ptr, bytes, 0, bytesCopied);
 
                 var br = new BinaryReader(new MemoryStream(bytes));
                 var gfs = new GameFinalScoreState();

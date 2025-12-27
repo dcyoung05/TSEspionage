@@ -10,7 +10,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 using Il2CppInterop.Runtime;
-using Il2CppInterop.Runtime.Injection;
 
 namespace TSEspionage
 {
@@ -78,7 +77,7 @@ namespace TSEspionage
 
                 // Trim the camera presets
                 var cameraPresets = lowerHUD.Find("CameraPresets");
-                //TrimCameraPresets(cameraPresets);
+                TrimCameraPresets(cameraPresets);
 
                 // Move and update the card tabs
                 cardTray.gameObject.AddComponent<CardTabBehaviour>();
@@ -138,11 +137,16 @@ namespace TSEspionage
                 return finalControlBar;
             }
 
+            private delegate IntPtr CreateSprite_InjectedDelegate(IntPtr texture, ref Rect rect, ref Vector2 pivot, float pixelsPerUnit, uint extrude,
+                SpriteMeshType meshType, ref Vector4 border, bool generateFallbackPhysicsShape, IntPtr secondaryTexture);
+
             /**
              * Trim off the top of the camera preset columns so they don't cover as much of the map
              */
             private static void TrimCameraPresets(Transform cameraPresets)
             {
+                CreateSprite_InjectedDelegate csid = IL2CPP.ResolveICall<CreateSprite_InjectedDelegate>("UnityEngine.Sprite::CreateSprite_Injected");
+
                 var cropRect = new Rect(0, 0, PresetsTextureWidth, PresetsTextureHeight - PresetsTextureCropAmount);
                 var sizeDelta = new Vector2(48f, 186f - PresetsTextureCropAmount / 2.0f);
                 const float positionY = 92f - PresetsTextureCropAmount / 4.0f;
@@ -151,8 +155,13 @@ namespace TSEspionage
                 var leftPresets = cameraPresets.Find("Left");
                 var leftImage = leftPresets.GetComponent<Image>();
                 var leftShadow = cameraPresets.Find("ShadowLeft");
+                var ppu = leftImage.sprite.pixelsPerUnit;
+                var pivot = new Vector2(0.5f, 0.5f);
+                var border = Vector4.zero;
 
-                leftImage.sprite = Sprite.Create(leftImage.sprite.texture, cropRect, new Vector2(0.5f, 0.5f));
+                var spritePtrLeft = csid(Object.MarshalledUnityObject.Marshal<Texture2D>(leftImage.sprite.texture), ref cropRect, ref pivot, 
+                    ppu, 0, SpriteMeshType.Tight, ref border, false, IntPtr.Zero);
+                leftImage.sprite = UnityEngine.Bindings.Unmarshal.UnmarshalUnityObject<Sprite>(spritePtrLeft);
 
                 var leftTransform = leftPresets.GetComponent<RectTransform>();
                 leftTransform.sizeDelta = sizeDelta;
@@ -167,7 +176,9 @@ namespace TSEspionage
                 var rightImage = rightPresets.GetComponent<Image>();
                 var rightShadow = cameraPresets.Find("ShadowRight");
 
-                rightImage.sprite = Sprite.Create(rightImage.sprite.texture, cropRect, new Vector2(0.5f, 0.5f));
+                var spritePtrRight = csid(Object.MarshalledUnityObject.Marshal<Texture2D>(rightImage.sprite.texture), ref cropRect, ref pivot, 
+                    ppu, 0, SpriteMeshType.Tight, ref border, false, IntPtr.Zero);
+                rightImage.sprite = UnityEngine.Bindings.Unmarshal.UnmarshalUnityObject<Sprite>(spritePtrRight);
 
                 var rightTransform = rightPresets.GetComponent<RectTransform>();
                 rightTransform.sizeDelta = sizeDelta;
