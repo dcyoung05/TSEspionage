@@ -35,6 +35,9 @@ namespace TSEspionage
         private string _origDiscardPileText;
         private string _origRemovedPileText;
 
+        private IntPtr _updateTextPtr = IL2CPP.GetIl2CppMethod(Il2CppClassPointerStore<CardTabBehaviour>.NativeClassPtr, 
+                false, "UpdateText", "System.Void", "TSEspionage.CardCounts");
+
         public CardTabBehaviour(IntPtr ptr) : base(ptr) {}
 
         public void Initialize(CardCountManager cardCountManager, Transform cardTray)
@@ -94,18 +97,12 @@ namespace TSEspionage
 
         public void Start()
         {
-            IntPtr clazz = this.ObjectClass;
-            IntPtr method = IL2CPP.GetIl2CppMethod(clazz, false, "UpdateText", "System.Void", "TSEspionage.CardCounts");
-
-            _cardCountManager.AddListener(new UnityAction<CardCounts>(this, method));
+            _cardCountManager.AddListener(new UnityAction<CardCounts>(this, _updateTextPtr));
         }
 
         public void OnDestroy()
         {
-            IntPtr clazz = this.ObjectClass;
-            IntPtr method = IL2CPP.GetIl2CppMethod(clazz, false, "UpdateText", "System.Void", "TSEspionage.CardCounts");
-
-            _cardCountManager.RemoveListener(new UnityAction<CardCounts>(this, method));
+            _cardCountManager.RemoveListener(new UnityAction<CardCounts>(this, _updateTextPtr));
         }
 
         /**

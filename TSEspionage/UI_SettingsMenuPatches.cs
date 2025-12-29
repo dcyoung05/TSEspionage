@@ -113,8 +113,8 @@ namespace TSEspionage
 
         public static void Init()
         {
-            IntPtr clazz = Il2CppClassPointerStore<SettingsCallbacks>.NativeClassPtr;
-            IntPtr method = IL2CPP.GetIl2CppMethod(clazz, false, "HandleSceneLoaded", "System.Void", "UnityEngine.SceneManagement.Scene");
+            IntPtr method = IL2CPP.GetIl2CppMethod(Il2CppClassPointerStore<SettingsCallbacks>.NativeClassPtr, false, 
+                "HandleSceneLoaded", "System.Void", "UnityEngine.SceneManagement.Scene");
 
             var sc = new SettingsCallbacks();
             SceneManager.sceneLoaded += new UnityAction<Scene, LoadSceneMode>(sc, method);

@@ -8,7 +8,6 @@ using HarmonyLib;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
-using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using System;
 
@@ -18,7 +17,7 @@ namespace TSEspionage
      * Patches the Twilight Struggle code.
      */
     [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-    public class InitEspionage : BasePlugin
+    public class TSEspionage : BasePlugin
     {
         internal static new ManualLogSource Log;
 

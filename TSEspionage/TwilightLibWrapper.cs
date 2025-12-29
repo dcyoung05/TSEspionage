@@ -42,6 +42,7 @@ namespace TSEspionage
         private static readonly int DeckCountsSize = Marshal.SizeOf<GameDeckCounts>();
         private static readonly int PlayerDataSize = Marshal.SizeOf<PlayerData>();
         private static readonly int PlayerHandStateSize = Marshal.SizeOf<GamePlayerHandState>();
+        // Marshal.SizeOf doesn't work on GameFinalScoreState anymore.
         private static readonly int RegionScoreStateSize = 180;
         
         public static GameFinalScoreState GetGameFinalScoreState()

@@ -28,36 +28,28 @@
 
   <ItemGroup>
     <Reference Include="UnityEngine">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\BepInEx\interop\UnityEngine.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>$(TSPath)\BepInEx\interop\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\BepInEx\interop\Assembly-CSharp.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>$(TSPath)\BepInEx\interop\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\BepInEx\interop\Unity.TextMeshPro.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>$(TSPath)\BepInEx\interop\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\BepInEx\interop\UnityEngine.CoreModule.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>$(TSPath)\BepInEx\interop\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\BepInEx\interop\UnityEngine.UI.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>$(TSPath)\BepInEx\interop\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIElementsModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\BepInEx\interop\UnityEngine.UIElementsModule.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>$(TSPath)\BepInEx\interop\UnityEngine.UIElementsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\BepInEx\interop\UnityEngine.UIModule.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>$(TSPath)\BepInEx\interop\UnityEngine.UIModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.UIModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\BepInEx\interop\Il2Cppmscorlib.dll</HintPath>
-      <Private>false</Private>
+    <Reference Include="Il2Cppmscorlib">
+      <HintPath>$(TSPath)\BepInEx\interop\Il2Cppmscorlib.dll</HintPath>
     </Reference>
   </ItemGroup>
 
@@ -74,22 +66,28 @@
     <ReleaseFile Include="$(TSPath)\dotnet\*">
       <ZipPath>\dotnet\</ZipPath>
     </ReleaseFile>
-    <ReleaseFile Include="$(TSPath)\BePinEx\core\**\*.*">
+    <ReleaseFile Include="$(TSPath)\BePinEx\core\*">
       <ZipPath>\BePinEx\core\</ZipPath>
     </ReleaseFile>
     <ReleaseFile Include="$(OutputPath)\TSEspionage.dll">
       <ZipPath>\BePinEx\plugins\</ZipPath>
     </ReleaseFile>
     <ReleaseFile Include="$(TSPath)\BePinEx\config\BePinEx.cfg">
-      <ZipPath>/BePinEx/config/</ZipPath>
+      <ZipPath>\BePinEx\config\</ZipPath>
     </ReleaseFile>
   </ItemGroup>
+
+  <Target Name="Test" DependsOnTargets="Build">
+    <Delete Files="$(TSPath)\BePinEx\plugins\TSEspionage.dll" />
+    <Copy SourceFiles="$(OutputPath)\TSEspionage.dll" DestinationFolder="$(TSPath)\BePinEx\plugins" />
+    <Exec Command="start steam://rungameid/406290" />
+  </Target>
 
   <Target Name="Release" Condition="$(Configuration) == 'Release'" DependsOnTargets="Build">
     <RemoveDir Directories="$(OutputPath)\$(ReleaseTempFolder)" />
     <Copy SourceFiles="@(ReleaseFile)" DestinationFolder="$(OutputPath)\$(ReleaseTempFolder)\%(ZipPath)" />
     <Delete Files="$(OutputPath)/TSEspionage.zip" />
-    <ZipDirectory SourceDirectory="$(OutputPath)\$(ReleaseTempFolder)" DestinationFile="$(OutputPath)/TSEspionage.zip" />
+    <ZipDirectory SourceDirectory="$(OutputPath)\$(ReleaseTempFolder)" DestinationFile="$(OutputPath)\TSEspionage.zip" />
   </Target>
 
 </Project>
