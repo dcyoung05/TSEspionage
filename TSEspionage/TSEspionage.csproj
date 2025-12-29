@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TSPath Condition="'$(TSPath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\</TSPath>
+    <TSPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\</TSPath>
     <ReleaseTempFolder>ReleaseTempFolder</ReleaseTempFolder>
   </PropertyGroup>
 

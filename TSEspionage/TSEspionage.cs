@@ -31,21 +31,17 @@ namespace TSEspionage
             typeof(RegionControlBar)
         };
 
-        private void RegisterClasses()
-        {
-            foreach(var t in il2cppClasses)
-            {
-                ClassInjector.RegisterTypeInIl2Cpp(t);
-            }
-        }
-
         public override void Load()
         {
             var gameLogWriter = new GameLogWriter("");
             var gameEventHandler = new GameEventHandler(gameLogWriter);
             Log = base.Log;
 
-            RegisterClasses();
+            // Register classes that need to be injected into the IL2CPP runtime
+            foreach(var t in il2cppClasses)
+            {
+                ClassInjector.RegisterTypeInIl2Cpp(t);
+            }
 
             // Initialize the patch classes
             GameLogPatches.Init(gameLogWriter, Log);
