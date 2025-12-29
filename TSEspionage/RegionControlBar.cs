@@ -4,13 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-using System.Collections.Generic;
 using GameData;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-using Il2CppInterop.Runtime.Injection;
-using Il2CppInterop.Runtime.InteropTypes.Fields;
 
 namespace TSEspionage
 {

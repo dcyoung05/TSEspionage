@@ -13,6 +13,12 @@
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
     <RootNamespace>TSEspionage</RootNamespace>
+    <PathMap>$(MSBuildProjectDirectory)=./</PathMap>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TSPath Condition="'$(TSPath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\</TSPath>
+    <ReleaseTempFolder>ReleaseTempFolder</ReleaseTempFolder>
   </PropertyGroup>
 
   <ItemGroup>
@@ -54,4 +60,36 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
+
+  <ItemGroup>
+    <ReleaseFile Include="$(TSPath)\.doorstop_version">
+      <ZipPath>\</ZipPath>
+    </ReleaseFile>
+    <ReleaseFile Include="$(TSPath)\doorstop_config.ini">
+      <ZipPath>\</ZipPath>
+    </ReleaseFile>
+    <ReleaseFile Include="$(TSPath)\winhttp.dll">
+      <ZipPath>\</ZipPath>
+    </ReleaseFile>
+    <ReleaseFile Include="$(TSPath)\dotnet\*">
+      <ZipPath>\dotnet\</ZipPath>
+    </ReleaseFile>
+    <ReleaseFile Include="$(TSPath)\BePinEx\core\**\*.*">
+      <ZipPath>\BePinEx\core\</ZipPath>
+    </ReleaseFile>
+    <ReleaseFile Include="$(OutputPath)\TSEspionage.dll">
+      <ZipPath>\BePinEx\plugins\</ZipPath>
+    </ReleaseFile>
+    <ReleaseFile Include="$(TSPath)\BePinEx\config\BePinEx.cfg">
+      <ZipPath>/BePinEx/config/</ZipPath>
+    </ReleaseFile>
+  </ItemGroup>
+
+  <Target Name="Release" Condition="$(Configuration) == 'Release'" DependsOnTargets="Build">
+    <RemoveDir Directories="$(OutputPath)\$(ReleaseTempFolder)" />
+    <Copy SourceFiles="@(ReleaseFile)" DestinationFolder="$(OutputPath)\$(ReleaseTempFolder)\%(ZipPath)" />
+    <Delete Files="$(OutputPath)/TSEspionage.zip" />
+    <ZipDirectory SourceDirectory="$(OutputPath)\$(ReleaseTempFolder)" DestinationFile="$(OutputPath)/TSEspionage.zip" />
+  </Target>
+
 </Project>
