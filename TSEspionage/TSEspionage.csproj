@@ -1,41 +1,93 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>net451</TargetFramework>
-    <Version>0.1.0</Version>
-    <Title>Twilight Struggle Espionage Library</Title>
-    <Authors>Emily Noneman</Authors>
-    <Description>A mod for Playdek's Twilight Struggle that includes improvements and bug-fixes.</Description>
-    <PackageLicenseUrl>https://www.mozilla.org/en-US/MPL/2.0/</PackageLicenseUrl>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>TSEspionage</AssemblyName>
+    <Product>TSEspionage</Product>
+    <Version>0.4.0</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <RestoreAdditionalProjectSources>
+      https://api.nuget.org/v3/index.json;
+      https://nuget.bepinex.dev/v3/index.json;
+      https://nuget.samboy.dev/v3/index.json
+    </RestoreAdditionalProjectSources>
+    <RootNamespace>TSEspionage</RootNamespace>
+    <PathMap>$(MSBuildProjectDirectory)=./</PathMap>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TSPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\</TSPath>
+    <ReleaseTempFolder>ReleaseTempFolder</ReleaseTempFolder>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lib.Harmony" Version="2.3.3" />
+    <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="UnityEngine">
+      <HintPath>$(TSPath)\BepInEx\interop\UnityEngine.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>resources\Third Party\Assembly-CSharp.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>$(TSPath)\BepInEx\interop\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>resources\Third Party\Unity.TextMeshPro.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>$(TSPath)\BepInEx\interop\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>resources\Third Party\UnityEngine.CoreModule.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>$(TSPath)\BepInEx\interop\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>resources\Third Party\UnityEngine.UI.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>$(TSPath)\BepInEx\interop\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIElementsModule">
-      <HintPath>resources\Third Party\UnityEngine.UIElementsModule.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>$(TSPath)\BepInEx\interop\UnityEngine.UIElementsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
-      <HintPath>resources\Third Party\UnityEngine.UIModule.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>$(TSPath)\BepInEx\interop\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2Cppmscorlib">
+      <HintPath>$(TSPath)\BepInEx\interop\Il2Cppmscorlib.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <ItemGroup>
+    <ReleaseFile Include="$(TSPath)\.doorstop_version">
+      <ZipPath>\</ZipPath>
+    </ReleaseFile>
+    <ReleaseFile Include="$(TSPath)\doorstop_config.ini">
+      <ZipPath>\</ZipPath>
+    </ReleaseFile>
+    <ReleaseFile Include="$(TSPath)\winhttp.dll">
+      <ZipPath>\</ZipPath>
+    </ReleaseFile>
+    <ReleaseFile Include="$(TSPath)\dotnet\*">
+      <ZipPath>\dotnet\</ZipPath>
+    </ReleaseFile>
+    <ReleaseFile Include="$(TSPath)\BePinEx\core\*">
+      <ZipPath>\BePinEx\core\</ZipPath>
+    </ReleaseFile>
+    <ReleaseFile Include="$(OutputPath)\TSEspionage.dll">
+      <ZipPath>\BePinEx\plugins\</ZipPath>
+    </ReleaseFile>
+    <ReleaseFile Include="$(TSPath)\BePinEx\config\BePinEx.cfg">
+      <ZipPath>\BePinEx\config\</ZipPath>
+    </ReleaseFile>
+  </ItemGroup>
+
+  <Target Name="Test" DependsOnTargets="Build">
+    <Delete Files="$(TSPath)\BePinEx\plugins\TSEspionage.dll" />
+    <Copy SourceFiles="$(OutputPath)\TSEspionage.dll" DestinationFolder="$(TSPath)\BePinEx\plugins" />
+    <Exec Command="start steam://rungameid/406290" />
+  </Target>
+
+  <Target Name="Release" Condition="$(Configuration) == 'Release'" DependsOnTargets="Build">
+    <RemoveDir Directories="$(OutputPath)\$(ReleaseTempFolder)" />
+    <Copy SourceFiles="@(ReleaseFile)" DestinationFolder="$(OutputPath)\$(ReleaseTempFolder)\%(ZipPath)" />
+    <Delete Files="$(OutputPath)\TSEspionage*.zip" />
+    <ZipDirectory SourceDirectory="$(OutputPath)\$(ReleaseTempFolder)" DestinationFile="$(OutputPath)\TSEspionage-$(Version).zip" />
+  </Target>
+
 </Project>

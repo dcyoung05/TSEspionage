@@ -1,0 +1,56 @@
+﻿/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+using HarmonyLib;
+using BepInEx;
+using BepInEx.Logging;
+using BepInEx.Unity.IL2CPP;
+using Il2CppInterop.Runtime.Injection;
+using System;
+
+namespace TSEspionage
+{
+    /**
+     * Patches the Twilight Struggle code.
+     */
+    [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+    public class TSEspionage : BasePlugin
+    {
+        internal static new ManualLogSource Log;
+
+        private Type[] il2cppClasses =
+        {
+            typeof(TwilightLibWrapper.Players),
+            typeof(UI_SettingsMenuPatches.SettingsCallbacks),
+            typeof(CardCounts),
+            typeof(CardCountManager),
+            typeof(CardTabBehaviour),
+            typeof(RegionControlBar)
+        };
+
+        public override void Load()
+        {
+            var gameLogWriter = new GameLogWriter("");
+            var gameEventHandler = new GameEventHandler(gameLogWriter);
+            Log = base.Log;
+
+            // Register classes that need to be injected into the IL2CPP runtime
+            foreach(var t in il2cppClasses)
+            {
+                ClassInjector.RegisterTypeInIl2Cpp(t);
+            }
+
+            // Initialize the patch classes
+            GameLogPatches.Init(gameLogWriter, Log);
+            LoadLevelSplashScreenPatches.Init();
+            TwilightStrugglePatches.Init(gameEventHandler);
+            UI_SettingsMenuPatches.Init();
+
+            // Patch the TS assembly
+            new Harmony("com.twilight-struggle.TSEspionage").PatchAll();
+        }
+    }
+}

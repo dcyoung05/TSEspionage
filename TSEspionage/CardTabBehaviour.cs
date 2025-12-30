@@ -7,6 +7,8 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using Il2CppInterop.Runtime;
 
 namespace TSEspionage
 {
@@ -32,6 +34,11 @@ namespace TSEspionage
         private string _origPlayerHandText;
         private string _origDiscardPileText;
         private string _origRemovedPileText;
+
+        private IntPtr _updateTextPtr = IL2CPP.GetIl2CppMethod(Il2CppClassPointerStore<CardTabBehaviour>.NativeClassPtr, 
+                false, "UpdateText", "System.Void", "TSEspionage.CardCounts");
+
+        public CardTabBehaviour(IntPtr ptr) : base(ptr) {}
 
         public void Initialize(CardCountManager cardCountManager, Transform cardTray)
         {
@@ -90,12 +97,12 @@ namespace TSEspionage
 
         public void Start()
         {
-            _cardCountManager.AddListener(UpdateText);
+            _cardCountManager.AddListener(new UnityAction<CardCounts>(this, _updateTextPtr));
         }
 
         public void OnDestroy()
         {
-            _cardCountManager.RemoveListener(UpdateText);
+            _cardCountManager.RemoveListener(new UnityAction<CardCounts>(this, _updateTextPtr));
         }
 
         /**
@@ -105,7 +112,7 @@ namespace TSEspionage
         {
             ushort playerCount;
             ushort opponentCount;
-            if (cardCounts.Players.LocalSuperpower == EPlayer.US)
+            if (cardCounts.Players.Get().LocalSuperpower == EPlayer.US)
             {
                 playerCount = cardCounts.UsaHandCount;
                 opponentCount = cardCounts.UssrHandCount;
@@ -119,11 +126,11 @@ namespace TSEspionage
             // TODO: Decide to display China Card or not
             var playerChina = "";
             var opponentChina = "";
-            if (cardCounts.Players.LocalSuperpower == cardCounts.ChinaCardHolder)
+            if (cardCounts.Players.Get().LocalSuperpower == cardCounts.ChinaCardHolder)
             {
                 playerChina = cardCounts.ChinaCardFaceUp ? " + C" : " - C";
             }
-            else if (cardCounts.Players.OpposingSuperpower == cardCounts.ChinaCardHolder)
+            else if (cardCounts.Players.Get().OpposingSuperpower == cardCounts.ChinaCardHolder)
             {
                 opponentChina = cardCounts.ChinaCardFaceUp ? " + C" : " - C";
             }
@@ -132,11 +139,11 @@ namespace TSEspionage
             _playerHandTmp.text = playerText;
             _playerHandActiveTmp.text = playerText;
 
-            var discardText = $"{_origDiscardPileText} ({cardCounts.DiscardPileCount})";
+            var discardText = $"{_origDiscardPileText} ({cardCounts.DiscardPileCount.Get()})";
             _discardedPileTmp.text = discardText;
             _discardedPileActiveTmp.text = discardText;
 
-            var removedText = $"{_origRemovedPileText} ({cardCounts.RemovedPileCount})";
+            var removedText = $"{_origRemovedPileText} ({cardCounts.RemovedPileCount.Get()})";
             _removedPileTmp.text = removedText;
             _removedPileActiveTmp.text = removedText;
         }

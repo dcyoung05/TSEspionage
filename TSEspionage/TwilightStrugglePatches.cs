@@ -9,6 +9,7 @@ using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
+using Il2CppInterop.Runtime;
 
 namespace TSEspionage
 {
@@ -64,7 +65,7 @@ namespace TSEspionage
              * Update the scene's GameObjects
              */
             public static void Postfix()
-            {
+            {;
                 var gameRoot = GameObject.Find("/Canvas/GameRoot");
                 gameRoot.AddComponent<CardCountManager>();
                 _cardCountManager = gameRoot.GetComponent<CardCountManager>();
@@ -121,7 +122,7 @@ namespace TSEspionage
                 var influenceBar = parent.transform.Find("Influence").gameObject;
                 var finalControlBar = Object.Instantiate(influenceBar, parent.transform);
                 finalControlBar.name = "FinalInfluence";
-                finalControlBar.AddComponent(typeof(RegionControlBar));
+                finalControlBar.AddComponent(Il2CppType.Of<RegionControlBar>());
                 finalControlBar.transform.SetSiblingIndex(influenceBar.transform.GetSiblingIndex() + 1);
 
                 // Set position and size
@@ -134,6 +135,20 @@ namespace TSEspionage
                 barRectTransform.sizeDelta = new Vector2(barDelta.x, barDelta.y - InfluenceBar);
 
                 return finalControlBar;
+            }
+
+            // Needed beacause BePinEx can't automatically generate an interop method for CreateSprite
+            private delegate IntPtr CreateSprite_InjectedDelegate(IntPtr texture, ref Rect rect, ref Vector2 pivot, float pixelsPerUnit, uint extrude,
+                SpriteMeshType meshType, ref Vector4 border, bool generateFallbackPhysicsShape, IntPtr secondaryTexture);
+
+            private static Sprite CreateSprite(Texture2D texture, Rect rect, Vector2 pivot)
+            {
+                CreateSprite_InjectedDelegate csid = IL2CPP.ResolveICall<CreateSprite_InjectedDelegate>("UnityEngine.Sprite::CreateSprite_Injected");
+                var border = Vector4.zero;
+
+                var spritePtr = csid(Object.MarshalledUnityObject.Marshal<Texture2D>(texture), ref rect, ref pivot, 
+                    100, 0, SpriteMeshType.Tight, ref border, false, IntPtr.Zero);
+                return UnityEngine.Bindings.Unmarshal.UnmarshalUnityObject<Sprite>(spritePtr);
             }
 
             /**
@@ -149,8 +164,9 @@ namespace TSEspionage
                 var leftPresets = cameraPresets.Find("Left");
                 var leftImage = leftPresets.GetComponent<Image>();
                 var leftShadow = cameraPresets.Find("ShadowLeft");
+                var pivot = new Vector2(0.5f, 0.5f);
 
-                leftImage.sprite = Sprite.Create(leftImage.sprite.texture, cropRect, new Vector2(0.5f, 0.5f));
+                leftImage.sprite = CreateSprite(leftImage.sprite.texture, cropRect, new Vector2(0.5f, 0.5f));
 
                 var leftTransform = leftPresets.GetComponent<RectTransform>();
                 leftTransform.sizeDelta = sizeDelta;
@@ -165,7 +181,7 @@ namespace TSEspionage
                 var rightImage = rightPresets.GetComponent<Image>();
                 var rightShadow = cameraPresets.Find("ShadowRight");
 
-                rightImage.sprite = Sprite.Create(rightImage.sprite.texture, cropRect, new Vector2(0.5f, 0.5f));
+                rightImage.sprite = CreateSprite(rightImage.sprite.texture, cropRect, new Vector2(0.5f, 0.5f));
 
                 var rightTransform = rightPresets.GetComponent<RectTransform>();
                 rightTransform.sizeDelta = sizeDelta;

@@ -4,10 +4,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-using System.Collections.Generic;
 using GameData;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 namespace TSEspionage
 {
@@ -28,6 +28,8 @@ namespace TSEspionage
 
         private ushort _usaScore;
         private ushort _ussrScore;
+
+        public RegionControlBar(IntPtr ptr) : base(ptr) {}
 
         public void Init(GameObject controlBar, float mAnimateTime)
         {
@@ -83,13 +85,12 @@ namespace TSEspionage
             if (_usaScore != regionScore.player_score_state_usa
                 || _ussrScore != regionScore.player_score_state_ussr)
             {
-                StartCoroutine(AnimateBar(
-                    _imageUsa,
+                var sp = new ScorePanel();
+                StartCoroutine(sp.AnimateBar(_imageUsa,
                     _imageUsa.fillAmount,
                     regionScore.player_score_state_usa * 0.25f,
                     _animateTime));
-                StartCoroutine(AnimateBar(
-                    _imageUssr,
+                StartCoroutine(sp.AnimateBar(_imageUssr,
                     _imageUssr.fillAmount,
                     regionScore.player_score_state_ussr * 0.25f,
                     _animateTime));
@@ -97,37 +98,6 @@ namespace TSEspionage
 
             _usaScore = regionScore.player_score_state_usa;
             _ussrScore = regionScore.player_score_state_ussr;
-        }
-
-        private static IEnumerator<YieldInstruction> AnimateBar(
-            Image image,
-            float currentFill,
-            float targetFill,
-            float totalMoveTime)
-        {
-            var previousTime = Time.time;
-            var currentAnimTime = 0.0f;
-            var bAnimating = true;
-            while (bAnimating)
-            {
-                currentAnimTime += Time.time - previousTime;
-                previousTime = Time.time;
-                if (currentAnimTime < totalMoveTime)
-                {
-                    image.fillAmount = Vector2.Lerp(
-                            new Vector2(currentFill, 0.0f),
-                            new Vector2(targetFill, 0.0f),
-                            currentAnimTime / totalMoveTime)
-                        .x;
-                }
-                else
-                {
-                    image.fillAmount = targetFill;
-                    bAnimating = false;
-                }
-
-                yield return new WaitForEndOfFrame();
-            }
         }
     }
 }

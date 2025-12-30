@@ -28,7 +28,7 @@ namespace TSEspionage
 
         public void HandleEvent(ref IntPtr eventBuffer)
         {
-            var eventType = (EventType)Marshal.ReadIntPtr(eventBuffer).ToInt32();
+            var eventType = (EventType)Marshal.ReadIntPtr(eventBuffer).ToInt64();
             var eventPointer = eventBuffer + Marshal.SizeOf(typeof(int));
 
             switch (eventType)
