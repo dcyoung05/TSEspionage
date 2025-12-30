@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>TSEspionage</AssemblyName>
     <Product>TSEspionage</Product>
-    <Version>1.0.0</Version>
+    <Version>0.4.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
@@ -86,8 +86,8 @@
   <Target Name="Release" Condition="$(Configuration) == 'Release'" DependsOnTargets="Build">
     <RemoveDir Directories="$(OutputPath)\$(ReleaseTempFolder)" />
     <Copy SourceFiles="@(ReleaseFile)" DestinationFolder="$(OutputPath)\$(ReleaseTempFolder)\%(ZipPath)" />
-    <Delete Files="$(OutputPath)/TSEspionage.zip" />
-    <ZipDirectory SourceDirectory="$(OutputPath)\$(ReleaseTempFolder)" DestinationFile="$(OutputPath)\TSEspionage.zip" />
+    <Delete Files="$(OutputPath)\TSEspionage*.zip" />
+    <ZipDirectory SourceDirectory="$(OutputPath)\$(ReleaseTempFolder)" DestinationFile="$(OutputPath)\TSEspionage-$(Version).zip" />
   </Target>
 
 </Project>
