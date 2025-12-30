@@ -8,7 +8,7 @@ First you will need to find your Twilight Struggle install folder. Open Steam an
 
 Next [download the latest version of the mod](https://github.com/xelrach/TSEspionage/releases) for Windows. Open the ZIP file. Extract the contents of the ZIP file directly into the Twilight Struggle install directory. You should now have a directory called "BePinEx" in the same place as the "TwlightStruggle" executable.
 
-![Twilight Struggle Folder](https://github.com/dcyoung/TSEspionage/blob/main/docs/Twilight_Struggle_Folder.png?raw=true)
+![Twilight Struggle Folder](https://github.com/dcyoung05/TSEspionage/blob/main/docs/Twilight_Struggle_Folder.png?raw=true)
 
 Then start Twilight Struggle. The first time you start the game with this mod installed, it will take a few minutes for the main window to appear.
 
@@ -21,8 +21,8 @@ Remove doorstop_config.ini, .doorstop_version, winhttp.dll, BePinEx, and dotnet 
 If you would like to develop TSEspionage there are a few steps to get set-up:
 * Either:
   * Install the mod as described above.
-  * Or [install BePinEx][https://docs.bepinex.dev/master/articles/user_guide/installation/index.html], using the "bleeding edge" build for your platform and IL2CPP. Then copy 
-  `BePinEx\core\IL2CppInterop.Runtime.dll` from the mod ZIP file (this is needed to fix an incompatibility between BePinEx and the Unity version used by TS), or [build the fixed DLL][https://github.com/dcyoung05/Il2CppInterop] and copy it from the build directory.
+  * Or [install BePinEx](https://docs.bepinex.dev/master/articles/user_guide/installation/index.html), using the "bleeding edge" build for your platform and IL2CPP. Then copy 
+  `BePinEx\core\IL2CppInterop.Runtime.dll` from the mod ZIP file (this is needed to fix an incompatibility between BePinEx and the Unity version used by TS), or [build the fixed DLL](https://github.com/dcyoung05/Il2CppInterop) and copy it from the build directory.
 * Start Twilight Struggle and get to the main menu (needed to generate the interop assemblies).
 * Install the .NET SDK by opening a shell and running:
 ```
