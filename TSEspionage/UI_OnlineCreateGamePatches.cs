@@ -190,8 +190,8 @@ namespace TSEspionage
                 gameParams.scenario = ScenarioStandard;
             }
 
-            var chooseSidesMethod = (int)GetInstanceField(menu, "m_ChooseSidesMethod") + 1;
-            if (chooseSidesMethod == 1 && (bool)GetInstanceField(menu, "m_bPlayerSlotsSwapped"))
+            var chooseSidesMethod = menu.m_ChooseSidesMethod + 1;
+            if (chooseSidesMethod == 1 && menu.m_bPlayerSlotsSwapped)
             {
                 chooseSidesMethod = 0;
             }
@@ -210,24 +210,12 @@ namespace TSEspionage
                 2U,
                 new uint[]
                 {
-                    (uint)GetInstanceField(menu, "m_inviteID"),
+                    menu.m_inviteID,
                     0U
                 },
                 (uint)GetGameTime(),
                 gameParams
             );
-        }
-
-        private static object GetInstanceField<T>(T instance, string fieldName)
-        {
-            var field = AccessTools.Field(typeof(T), fieldName);
-            return field.GetValue(instance);
-        }
-
-        private static object CallInstanceMethod<T>(T instance, string methodName, object[] args)
-        {
-            var method = AccessTools.Method(typeof(T), methodName);
-            return method.Invoke(instance, args);
         }
 
         private static int GetGameTime()
