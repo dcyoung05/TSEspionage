@@ -83,7 +83,7 @@
     <Exec Command="start steam://rungameid/406290" />
   </Target>
 
-  <Target Name="Release" Condition="$(Configuration) == 'Release'" DependsOnTargets="Build">
+  <Target Name="Release" DependsOnTargets="Build">
     <RemoveDir Directories="$(OutputPath)\$(ReleaseTempFolder)" />
     <Copy SourceFiles="@(ReleaseFile)" DestinationFolder="$(OutputPath)\$(ReleaseTempFolder)\%(ZipPath)" />
     <Delete Files="$(OutputPath)\TSEspionage*.zip" />
